@@ -49,35 +49,9 @@ Next.js + Supabase + Google Apps Script (+ Gemini API)。
 
 ## アーキテクチャ
 
-```mermaid
-flowchart LR
-  subgraph phone["スマホ"]
-    pwa["家計簿アプリ（PWA）<br>Next.js"]
-  end
-
-  subgraph vercel["Vercel"]
-    api["レシート読み取り API<br>/api/receipt"]
-  end
-
-  subgraph google["Google"]
-    gmail["Gmail<br>三井住友カード・銀行の通知メール"]
-    gas["Google Apps Script<br>1 日 1 回実行"]
-    gemini["Gemini API"]
-  end
-
-  subgraph supabase["Supabase（PostgreSQL）"]
-    db[("expenses<br>categories<br>category_rules")]
-    trigger["自動分類トリガー"]
-  end
-
-  pwa -- "支出の読み書き<br>（publishable key）" --> db
-  pwa -. "レシート画像（任意）" .-> api
-  api -. "画像の読み取り" .-> gemini
-  api -. "1 日の回数を記録<br>（secret key）" .-> db
-  gmail -. "通知メールを検索（任意）" .-> gas
-  gas -. "支出を登録<br>（secret key）" .-> db
-  db --- trigger
-```
+<p align="center">
+  <img src="docs/architecture.svg" alt="アーキテクチャ図。スマホの家計簿アプリ（Next.js）が Supabase を直接読み書きする。Google Apps Script が Gmail の通知メールから支出を Supabase に登録する。レシート読み取り API が Gemini API に画像の読み取りを依頼する。" width="860">
+</p>
 
 実線は必須の構成、点線は任意の機能を表す。
 
