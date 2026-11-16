@@ -12,6 +12,19 @@ Next.js + Supabase + Google Apps Script (+ Gemini API)。
   <img src="docs/screenshot-trend.png" alt="月次推移タブの画面（金額はモザイク）" width="240">
 </p>
 
+## アーキテクチャ
+
+<p align="center">
+  <img src="docs/architecture.svg" alt="アーキテクチャ図。スマホの家計簿アプリ（Next.js）が Supabase を直接読み書きする。Google Apps Script が Gmail の通知メールから支出を Supabase に登録する。レシート読み取り API が Gemini API に画像の読み取りを依頼する。" width="860">
+</p>
+
+実線は必須の構成、点線は任意の機能を表す。
+
+- **アプリ**: ブラウザから Supabase を直接読み書きする。Vercel は画面の配信と、レシート読み取り API だけを担う。
+- **自動取り込み**: Google Apps Script（GAS）が Gmail から通知メールを探し、金額・店名・日付を取り出して Supabase に登録する。Vercel は経由しない。
+- **レシート読み取り**: API が画像を Gemini に送り、読み取った結果をアプリの入力欄に返す。支出の登録はアプリから行う。
+- **自動分類**: カテゴリが未分類の支出が登録されると、Supabase のトリガーが `category_rules` のキーワードと店名を照らし合わせてカテゴリを割り当てる。手入力と自動取り込みのどちらにも働く。
+
 ## 機能
 
 画面は 3 つのタブで、横スワイプでも切り替えられる。月は画面上部の矢印で切り替える（全タブ共通）。
@@ -46,19 +59,6 @@ Next.js + Supabase + Google Apps Script (+ Gemini API)。
 ### その他
 - **PWA**: スマホのホーム画面に追加すると、アプリのように使える。
 - **ログインなし**: 個人利用の前提で、ログインは設けていない（上の注意を参照）。
-
-## アーキテクチャ
-
-<p align="center">
-  <img src="docs/architecture.svg" alt="アーキテクチャ図。スマホの家計簿アプリ（Next.js）が Supabase を直接読み書きする。Google Apps Script が Gmail の通知メールから支出を Supabase に登録する。レシート読み取り API が Gemini API に画像の読み取りを依頼する。" width="860">
-</p>
-
-実線は必須の構成、点線は任意の機能を表す。
-
-- **アプリ**: ブラウザから Supabase を直接読み書きする。Vercel は画面の配信と、レシート読み取り API だけを担う。
-- **自動取り込み**: Google Apps Script（GAS）が Gmail から通知メールを探し、金額・店名・日付を取り出して Supabase に登録する。Vercel は経由しない。
-- **レシート読み取り**: API が画像を Gemini に送り、読み取った結果をアプリの入力欄に返す。支出の登録はアプリから行う。
-- **自動分類**: カテゴリが未分類の支出が登録されると、Supabase のトリガーが `category_rules` のキーワードと店名を照らし合わせてカテゴリを割り当てる。手入力と自動取り込みのどちらにも働く。
 
 ## 使う前に必ず読むこと
 
