@@ -13,6 +13,7 @@ import {
 import { yen } from "@/lib/format";
 import AnalysisTab from "@/components/AnalysisTab";
 import TrendTab from "@/components/TrendTab";
+import SubscriptionTab from "@/components/SubscriptionTab";
 import ReceiptScanner, { type ReceiptResult } from "@/components/ReceiptScanner";
 
 const fmtDate = (iso: string) =>
@@ -23,8 +24,8 @@ const fmtDate = (iso: string) =>
     minute: "2-digit",
   });
 
-type Tab = "history" | "analysis" | "trend";
-const TAB_ORDER: Tab[] = ["history", "analysis", "trend"];
+type Tab = "history" | "analysis" | "trend" | "subscription";
+const TAB_ORDER: Tab[] = ["history", "analysis", "trend", "subscription"];
 
 // スワイプとみなす条件: 横に 60px 以上、かつ縦の動きの 1.5 倍以上
 const SWIPE_MIN_X = 60;
@@ -310,6 +311,7 @@ export default function ExpenseApp() {
             ["history", "入力・履歴"],
             ["analysis", "月次分析"],
             ["trend", "月次推移"],
+            ["subscription", "サブスク"],
           ] as const
         ).map(([key, label]) => (
           <button
@@ -330,7 +332,9 @@ export default function ExpenseApp() {
       >
         {error && <p className="rounded-lg bg-red-50 p-3 text-sm text-red-600">{error}</p>}
 
-        {tab === "trend" ? (
+        {tab === "subscription" ? (
+          <SubscriptionTab categoryNames={categoryNames} />
+        ) : tab === "trend" ? (
           <TrendTab colorOf={colorOf} categoryNames={categoryNames} />
         ) : tab === "analysis" ? (
           loading ? (
